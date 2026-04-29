@@ -1,6 +1,7 @@
 name: Unzip smart-home-agent.zip
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - smart-home-agent.zip
