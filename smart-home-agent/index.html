@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MINO 智能家居多Agent协作系统</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- ======== 顶部导航 ======== -->
+  <header class="app-header">
+    <div class="logo">
+      <span class="logo-icon">&#127968;</span>
+      <h1>MINO SmartHome Multi-Agent System</h1>
+      <span class="version-tag">v2.0</span>
+    </div>
+    <div class="status-bar">
+      <span class="status-dot online"></span>
+      <span id="systemStatus">系统就绪 - 等待指令</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- ======== 左侧：设备面板 ======== -->
+    <aside class="device-panel">
+      <h2>&#128226; 已连接设备</h2>
+      <p class="panel-subtitle">共 <span id="deviceCount">0</span> 台设备在线</p>
+      <div class="device-grid" id="deviceGrid">
+        <!-- JS 动态渲染设备卡片 -->
+      </div>
+    </aside>
+
+    <!-- ======== 中间：主交互区 ======== -->
+    <section class="interaction-area">
+
+      <!-- ★★★ 项目核心要素展示卡（申请表必填项可视化）★★★ -->
+      <div class="core-features-card">
+        <div class="feature-header">
+          <span class="feature-badge">Core Features</span>
+          <h2>&#128218; 项目核心要素</h2>
+        </div>
+        <div class="feature-grid">
+          <!-- 要素1：核心痛点 -->
+          <div class="feature-item pain-point">
+            <div class="feature-label">
+              <span class="label-icon">&#128308;</span> 要素1：项目解决的核心痛点
+            </div>
+            <div class="feature-content">
+              <p class="pain-title">&#128680; <strong>智能家居"意图理解鸿沟"</strong></p>
+              <ul class="pain-list">
+                <li><strong>现有问题：</strong>用户说"我要睡了"，需手动逐一操作<strong>5~10台设备</strong>（关灯→调空调→拉窗帘→锁门…），平均耗时 <em>2分钟</em>+</li>
+                <li><strong>根因：</strong>传统智能家居只做<strong>"被动控制"</strong>——用户精确指定哪个设备做什么动作；缺乏对模糊自然语言指令的<strong>深层理解与自动拆解能力</strong></li>
+                <li><strong>本方案：</strong>输入一句自然语言 → 三层Agent协作自动拆解为结构化子任务链 → 一键执行全部设备联动</li>
+              </ul>
+              <div class="pain-metric">
+                <span class="metric-before">&#10060; 操作前：<b>2分钟/场景 × N台设备 × 手动逐个操作</b></span>
+                <span class="metric-arrow">&#10132;</span>
+                <span class="metric-after">&#9989; 操作后：<b>3秒内一键完成 / 92%准确率 / 全自动</b></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 要素2：核心逻辑流 -->
+          <div class="feature-item logic-flow">
+            <div class="feature-label">
+              <span class="label-icon">&#129302;</span> 要素2：核心逻辑流（长链推理 + 多Agent协作）
+            </div>
+            <div class="feature-content">
+              <div class="flow-diagram">
+                <div class="flow-step step1">
+                  <div class="step-badge">Phase 1</div>
+                  <div class="step-agent">&#129504; 意图解析Agent</div>
+                  <div class="step-tech"><strong>长链推理 (Chain-of-Thought)</strong></div>
+                  <ol class="step-details">
+                    <li>接收自然语言指令（如"我要睡了"）</li>
+                    <li>关键词匹配 + 语义近似 → 候选场景排序</li>
+                    <li>场景消歧 → 确定最高置信度场景</li>
+                    <li><em style="color:var(--accent-cyan)">7步推理链：</em>用户表达 → 推断状态 → 需求分析 → 设备匹配 → 参数提取 → 冲突预判 → 输出子任务</li>
+                  </ol>
+                  <div class="step-output">&#128220; 输出：N个结构化原子任务</div>
+                </div>
+
+                <div class="flow-arrow-down">&#11015;</div>
+
+                <div class="flow-step step2">
+                  <div class="step-badge">Phase 2</div>
+                  <div class="step-agent">&#9881;&#65039; 设备调度Agent</div>
+                  <div class="step-tech"><strong>多Agent协作 · 冲突消解</strong></div>
+                  <ol class="step-details">
+                    <li>接收子任务列表，检测<strong>3类冲突规则</strong></li>
+                    <li><em style="color:var(--accent-yellow)">冲突A：</em>同设备并发操作 → 合并为最终状态</li>
+                    <li><em style="color:var(--accent-yellow)">冲突B：</em>互斥操作(开/关) → 取最后指令</li>
+                    <li><em style="color:var(--accent-yellow)">冲突C：</em>依赖关系(空调先开后调温) → 拓扑排序重排</li>
+                    <li>构建最优执行序列，派发IoT指令</li>
+                  </ol>
+                  <div class="step-output">&#128220; 输出：有序执行结果集</div>
+                </div>
+
+                <div class="flow-arrow-down">&#11015;</div>
+
+                <div class="flow-step step3">
+                  <div class="step-badge">Phase 3</div>
+                  <div class="step-agent">&#9989;&#65039; 反馈验证Agent</div>
+                  <div class="step-tech"><strong>闭环验证 · 智能降级</strong></div>
+                  <ol class="step-details">
+                    <li>逐项校验每个操作的执行结果</li>
+                    <li>失败项触发<strong>4种降级策略</strong></li>
+                    <li><em style="color:var(--accent-purple)">策略1:</em> 同类型替代设备 &nbsp; <em style="color:var(--accent-purple)">策略2:</em> 近似操作替代</li>
+                    <li><em style="color:var(--accent-purple)">策略3:</em> 自动重试(限1次) &nbsp; <em style="color:var(--accent-purple)">策略4:</em> 记录并通知</li>
+                    <li>生成综合评分报告 + 优化建议</li>
+                  </ol>
+                  <div class="step-output">&#128220; 输出：最终执行报告</div>
+                </div>
+              </div>
+
+              <div class="flow-summary">
+                <span class="summary-tag cot-tag">✅ 包含长链推理(CoT) — 7步推理链路</span>
+                <span class="summary-tag agent-tag">✅ 包含多Agent协作 — 3层Agent分工+编排器调度</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 自然语言指令输入 -->
+      <div class="command-box">
+        <h2>&#128172; 自然语言指令</h2>
+        <div class="quick-cmds">
+          <button class="quick-cmd" data-cmd="我要睡了">&#128719; 我要睡了</button>
+          <button class="quick-cmd" data-cmd="我要出门了">&#128682; 我要出门了</button>
+          <button class="quick-cmd" data-cmd="开始看电影">&#127916; 开始看电影</button>
+          <button class="quick-cmd" data-cmd="回家吃饭了">&#128322; 回家吃饭了</button>
+          <button class="quick-cmd" data-cmd="开启工作模式">&#128187; 工作模式</button>
+          <button class="quick-cmd" data-cmd="家里太冷了">&#10052;&#65039; 太冷了</button>
+        </div>
+        <div class="input-area">
+          <input type="text" id="commandInput" placeholder="输入自然语言指令，如'我要睡了'..." autocomplete="off" />
+          <button id="sendBtn">&#9654; 执行</button>
+        </div>
+      </div>
+
+      <!-- Agent 协作流水线可视化（核心展示）-->
+      <div class="agent-pipeline">
+        <h2>&#129302; Agent 协作流水线</h2>
+        <div class="pipeline-flow">
+          <div class="pipeline-node" id="intentNode">
+            <div class="node-icon">&#129504;</div>
+            <div class="node-title">意图解析Agent</div>
+            <div class="node-status">待命中...</div>
+            <div class="node-timer" id="intentTimer"></div>
+          </div>
+          <div class="pipeline-arrow">&#10132;</div>
+          <div class="pipeline-node" id="schedulerNode">
+            <div class="node-icon">&#9881;&#65039;</div>
+            <div class="node-title">设备调度Agent</div>
+            <div class="node-status">等待中...</div>
+            <div class="node-timer" id="schedulerTimer"></div>
+          </div>
+          <div class="pipeline-arrow">&#10132;</div>
+          <div class="pipeline-node" id="verifierNode">
+            <div class="node-icon">&#9989;&#65039;</div>
+            <div class="node-title">反馈验证Agent</div>
+            <div class="node-status">等待中...</div>
+            <div class="node-timer" id="verifierTimer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 长链推理日志（核心亮点！）-->
+      <div class="reasoning-log">
+        <h2>&#128279; 长链推理日志 <small>Chain-of-Thought Trace</small></h2>
+        <div class="log-container" id="reasoningLog">
+          <div class="log-entry system">
+            <div class="log-time">--:--:--</div>
+            <div class="log-msg">系统已初始化，等待用户输入指令...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== 右侧：执行日志与统计 ======== -->
+    <aside class="execution-panel">
+      <h2>&#128203; 设备执行日志</h2>
+      <div class="log-list" id="executionLog">
+        <div class="exec-entry idle">
+          <span class="exec-icon">&#128337;</span>
+          <span>暂无执行记录</span>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <h3>&#128202; 运行统计</h3>
+        <div class="stat-item">
+          <span class="stat-label">场景识别准确率</span>
+          <span class="stat-value highlight" id="accuracyRate">--%</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">总执行次数</span>
+          <span class="stat-value" id="execCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">平均响应耗时</span>
+          <span class="stat-value" id="avgTime">--ms</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">成功 / 失败</span>
+          <span class="stat-value"><span class="success-color" id="successCount">0</span> / <span class="fail-color" id="failCount">0</span></span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Token 消耗估算</span>
+          <span class="stat-value token-cost" id="tokenCost">0</span>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- 底部信息栏 -->
+  <footer class="app-footer">
+    <p>MINO SmartHome Multi-Agent System &copy; 2026 | 基于长链推理 + 多Agent协作架构 | 支持米家生态设备联动</p>
+  </footer>
+
+  <!-- 加载顺序很重要：依赖关系从下往上 -->
+  <script src="js/devices.js"></script>
+  <script src="js/intent-parser.js"></script>
+  <script src="js/device-scheduler.js"></script>
+  <script src="js/feedback-verifier.js"></script>
+  <script src="js/orchestrator.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
